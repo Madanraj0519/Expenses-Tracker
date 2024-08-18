@@ -154,7 +154,12 @@ const Income = () => {
                  </div>
                   ))
               ) : (
-                     <h3 className='text-center mt-5'>Items not found</h3>
+                <div>
+                  <div className='-mt-60 '>
+                    <Loading />
+                  </div>
+                   <h3 className='text-center -mt-60 base:-mt-72 font-medium'>Items not found</h3>
+                </div>
                   )
              }
 

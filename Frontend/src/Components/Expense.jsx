@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CustomCategory from './CustomCategory';
 import moment from 'moment-timezone';
 import ExpenseList from './ExpenseList';
+import Loading from './Loading';
 
 
 const Expense = () => {
@@ -141,7 +142,12 @@ const Expense = () => {
                  </div>
                   ))
               ) : (
-                <h3 className='text-center mt-5'>Items not found</h3>
+                <div>
+                   <div className='-mt-60 '>
+                     <Loading />
+                   </div>
+                   <h3 className='text-center -mt-60 base:-mt-72 font-medium'>Items not found</h3>
+                </div>
               )
              }
 

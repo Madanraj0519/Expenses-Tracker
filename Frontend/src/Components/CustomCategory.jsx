@@ -46,13 +46,14 @@ const CustomCategory = ({category, setCategory}) => {
                     ))}
                   <option value='others'>Custom</option>
                 </select>
+
                 {
                   category === 'others' && (
                   <>
                    <div className='flex items-center justify-end gap-1'>
                       <input type='text-' placeholder='Create Own Category' 
                       value={newCategory} onChange={(e) => setNewCategory(e.target.value)}
-                      id='userEmail' className=' p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black font-medium border-[#ffffffef]' />
+                      id='userEmail' className=' p-2 rounded-lg bg-[#f9f4f46f] w-[200px] base:w-[300px] border-2 text-black font-medium border-[#ffffffef]' />
                       <div 
                       onClick={handleAddCustomCategory} 
                       className='bg-green-500 p-2 text-2xl cursor-pointer rounded-md text-[#f9f4f4ea]'>
