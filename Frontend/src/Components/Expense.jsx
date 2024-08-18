@@ -90,7 +90,7 @@ const Expense = () => {
            className='flex flex-col gap-4'>
                 <CustomCategory category={category} setCategory={setCategory} />
 
-                <input type='text-' placeholder='Amount' 
+                <input type='number' placeholder='Amount' 
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)} 

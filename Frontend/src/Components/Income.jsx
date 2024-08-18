@@ -103,7 +103,7 @@ const Income = () => {
                 onChange={(e) => setCategory(e.target.value)} 
                 id='userEmail' className=' p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black font-medium border-[#ffffffef]' />
 
-                <input type='text-' placeholder='Amount' 
+                <input type='number' placeholder='Amount' 
                 required
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)} 
