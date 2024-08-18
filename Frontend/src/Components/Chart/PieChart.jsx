@@ -11,7 +11,7 @@ const PieChart = ({ expenses }) => {
     const [category, setCategory] = useState('category');
 
     const categoryTotals = expenses.reduce((acc, expense) =>{
-        acc[category === 'date' ? moment(expense.date).format('MMMM Do YYYY') : expense.category ] = (acc[expense.date] || 0) + expense.amount;
+        acc[category === 'date' ? moment(expense.date).format('MMM Do YYYY') : expense.category ] = (acc[expense.date] || 0) + expense.amount;
         return acc;
     }, {});
 
