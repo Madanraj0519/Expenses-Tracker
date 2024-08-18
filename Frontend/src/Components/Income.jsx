@@ -146,7 +146,7 @@ const Income = () => {
                     </div>
                     <div className='flex flex-col x-small:flex-row x-small:justify-between gap-2 x-small:gap-10 items-center'>
                       <p className='flex gap-1 text-sm items-center'><span className='text-yellow-500 font-semibold text-xl'>$</span> {item.amount}</p>
-                      <p className='flex gap-1 text-sm whitespace-nowrap items-center'><FaCalendar className='text-blue-300' />{moment(item.date).format('MMMM Do YYYY')}</p>
+                      <p className='flex gap-1 text-sm whitespace-nowrap items-center'><FaCalendar className='text-blue-300' />{moment(item.date).format('MMM Do YYYY')}</p>
                     </div>
                   </div>
     
