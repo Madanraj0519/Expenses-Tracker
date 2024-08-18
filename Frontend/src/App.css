@@ -1,0 +1,115 @@
+#root {
+
+  background-color: #9c99d5a0;
+
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.scroll::-webkit-scrollbar{
+  background-color: transparent;
+}
+/* 
+.container{
+  background-position: top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url("https://www.shutterstock.com/image-photo/money-tracker-app-budget-expense-260nw-1977696401.jpg");
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index:-1;
+} */
+
+.detail-container {
+  min-height: calc(100vh-250px);
+}
+
+.addList{
+  margin-top: -14PX;
+  height: 44px;
+  width: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #f9f9f9;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.addList   span {
+  background-color: rgb(249, 249, 249);
+  display: inline-block;
+}
+
+.addList   span:first-child{
+  height: 2px;
+  transform: translate(1px, 0px) rotate(0deg);
+  width: 16px;
+}
+
+.addList   span:nth-child(2){
+  height: 16px;
+  transform: translateX(-8px) rotate(0deg);
+  width: 2px;
+}
+
+.addList.active{
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #f3d10f;
+  border: 2px solid #f3b20f;
+  cursor: pointer;
+}
+.addList.active  span:first-child{
+  height: 2px;
+  transform: translateY(0px) translateX(6px) rotate(-45deg);
+  width: 22px;
+  transition: all 0.3s ease;
+}
+
+.addList.active  span:nth-child(2){
+  height: 10px;
+  transform: translateX(-18px) translateY(5px) rotate(-46deg);
+  width: 2px;
+  transition: all 0.3s ease;
+}
+
+.control a {
+  text-decoration:none;
+}
