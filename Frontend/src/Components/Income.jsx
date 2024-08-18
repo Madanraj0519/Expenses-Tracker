@@ -112,9 +112,9 @@ const Income = () => {
                 <input type='date'
                 required
                 value={date}
-                placeholder={`${Date.now()}`}
+                placeholder={`Choose date`}
                 onChange={(e) => setDate(e.target.value)} 
-                id='userPassword' className='p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black font-medium border-[#ffffffef]' />
+                id='userPassword' className='p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black w-full font-medium border-[#ffffffef]' />
 
                 <textarea type='text-' placeholder='Add a reference' 
                 value={description}
