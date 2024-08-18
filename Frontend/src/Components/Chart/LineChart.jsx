@@ -24,7 +24,7 @@ const LineChart = ({incomes, expenses}) => {
     const data = {
         labels: incomes.map((inc) =>{
             const {date} = inc
-            return moment(date).format('MMM Do YYYY');
+            return moment(date).format('MMM Do YY');
         }),
         datasets: [
             {
