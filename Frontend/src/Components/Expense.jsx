@@ -129,7 +129,7 @@ const Expense = () => {
     
                   <div className='font-medium flex flex-col justify-center x-small:justify-start items-center x-small:items-start'>
                     <div className='flex gap-2 justify-center items-center'>
-                      <span className='bg-green-700 w-3 h-3 rounded-full p-1'></span>
+                      <span className='bg-red-700 w-3 h-3 rounded-full p-1'></span>
                       <p>{item.category}</p>
                     </div>
                     <div className='flex flex-col x-small:flex-row x-small:justify-between gap-2 x-small:gap-10 items-center'>
