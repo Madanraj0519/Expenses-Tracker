@@ -89,7 +89,7 @@ const SignUp = () => {
                 onChange={(e) => setEmail(e.target.value)} id='userEmail' className='p-3 rounded-lg font-medium bg-[#090e3db0]' />
                 <input type='password' placeholder='User Password' value={password}
                 onChange={(e) => setPassword(e.target.value)} id='userPassword' className='p-3 rounded-lg font-medium bg-[#090e3db0]' />
-                <button type='submit' className='bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? "Loading" : "Sign Up"}</button>
+                <button type='submit' className='bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? "Loading..." : "Sign Up"}</button>
             </form>
       <div className='base:flex gap-2 mt-5 font-semibold'>
         <p>Already having a account?</p>

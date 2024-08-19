@@ -11,6 +11,8 @@ import moment from 'moment-timezone';
 import ExpenseList from './ExpenseList';
 import Loading from './Loading';
 import {toast} from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 const Expense = () => {
@@ -19,7 +21,7 @@ const Expense = () => {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(Date.now());
+  const [date, setDate] = useState('');
   const [incomes, setIncomes] = useState([]);
   const [error, setError] = useState('');
 
@@ -99,12 +101,13 @@ const Expense = () => {
                 onChange={(e) => setAmount(e.target.value)} 
                 id='userEmail' className=' p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black font-medium border-[#ffffffef]' />
 
-                <input type='date'
+                <DatePicker
                 required
-                value={date}
+                selected={date}
+                placeholderText='Choose date'
                 placeholder={`Choose date`}
-                onChange={(e) => setDate(e.target.value)} 
-                id='userPassword' className='p-2 rounded-lg bg-[#f9f4f46f] border-2 w-full text-black font-medium border-[#ffffffef]' />
+                onChange={(date) => setDate(date)} 
+                id="date"  className='p-2 rounded-lg cursor-pointer bg-[#f9f4f46f] border-2 w-full text-black font-medium border-[#ffffffef]' />
 
                 <textarea type='text-' placeholder='Add a reference' 
                 value={description}
@@ -148,7 +151,7 @@ const Expense = () => {
                    <div className='flex justify-center items-center'>
                      <Loading />
                    </div>
-                   <h3 className='text-center font-medium'>Items not found</h3>
+                   <h3 className='text-center font-medium'>Expenses not found</h3>
                 </div>
               )
              }

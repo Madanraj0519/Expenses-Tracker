@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment-timezone';
 import Loading from './Loading';
 import {toast} from "react-hot-toast";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 
 
@@ -16,7 +18,7 @@ const Income = () => {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(Date.now());
+  const [date, setDate] = useState('');
   const [incomes, setIncomes] = useState([]);
   const [error, setError] = useState('');
 
@@ -114,12 +116,15 @@ const Income = () => {
                 onChange={(e) => setAmount(e.target.value)} 
                 id='userEmail' className=' p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black font-medium border-[#ffffffef]' />
 
-                <input type='date'
+                <DatePicker 
+                id="date" 
                 required
-                value={date}
+                selected={date}
+                placeholderText='choose date'
+                // value={date}
                 placeholder={`Choose date`}
-                onChange={(e) => setDate(e.target.value)} 
-                id='userPassword' className='p-2 rounded-lg bg-[#f9f4f46f] border-2 text-black w-full font-medium border-[#ffffffef]' />
+                onChange={(date) => setDate(date)} 
+                className='p-2 rounded-lg bg-[#f9f4f46f] cursor-pointer border-2 text-black w-full font-medium border-[#ffffffef]' />
 
                 <textarea type='text-' placeholder='Add a reference' 
                 value={description}
@@ -163,7 +168,7 @@ const Income = () => {
                   <div className='flex justify-center items-center'>
                     <Loading />
                   </div>
-                   <h3 className='text-center font-medium'>Items not found</h3>
+                   <h3 className='text-center font-medium'>Incomes not found</h3>
                 </div>
                   )
              }
