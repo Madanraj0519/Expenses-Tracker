@@ -10,8 +10,8 @@ import {toast} from "react-hot-toast";
 
 const SignIn = () => {
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("madan__raj@hotmail.com");
+  const [password, setPassword] = useState("madan");
   const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
@@ -66,8 +66,8 @@ const SignIn = () => {
   return (
   <>
     <div className='flex justify-start items-center gap-2 p-5'>
-      <img className='h-10 w-10 base:w-12 base:h-12' src={logo} />
-      <h4 className='text-2xl small:text-3xl base:text-4xl font-bold text-[#eeebebdb]'>Expense Tracker</h4>
+       <img className='h-10 w-10 base:w-12 base:h-12' src={logo} />
+       <h4 className='text-2xl small:text-3xl base:text-4xl font-bold text-[#eeebebdb]'>Expense Tracker</h4>
     </div>
     <div className='w-[100%] h-screen overflow-hidden flex flex-col items-center text-center'>
       <div  className='large:w-2/6 mx-auto pt-2 mt-16 border-2 bg-[#e4dfdf2c] rounded-lg border-[#e4dfdf8c] p-4 shadow-sm shadow-white'>
