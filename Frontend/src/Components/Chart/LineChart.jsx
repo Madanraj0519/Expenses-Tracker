@@ -1,7 +1,9 @@
 import React from 'react';
 import moment from 'moment-timezone';
 import { Line } from 'react-chartjs-2';
-import Loading from "../Loading"
+import Loading from "../Loading";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { Chart as ChartJS, LineElement, PointElement, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 
 ChartJS.register(LineElement, PointElement, Tooltip, Legend, CategoryScale, LinearScale);
@@ -37,7 +39,7 @@ const LineChart = ({incomes, expenses}) => {
                     })
                 ],
                 backgroundColor: 'green',
-                tension: .2
+                tension: .3
             },
             {
                 label: 'Expenses',
@@ -48,7 +50,7 @@ const LineChart = ({incomes, expenses}) => {
                     })
                 ],
                 backgroundColor: 'red',
-                tension: .2
+                tension: .3
             }
         ]
     }

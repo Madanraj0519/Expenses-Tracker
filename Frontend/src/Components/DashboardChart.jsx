@@ -57,7 +57,8 @@ const DashboardChart = () => {
              expenses={selectOption === 'expense' ? expenses : incomes} 
              selectOption={selectOption} setSelectOption={setSelectOption} />
            </div>
-           <div className='w-[290px]  small:w-[330px] x-small:w-[380px] base:w-[450px] large:w-[770px] bg-white mt-4 rounded-md p-2'>
+           <div className='w-[450px] small:w-[550px] x-small:w-[650px] base:w-[450px] large:w-[770px] 
+           rotate-90 base:rotate-0 bg-white my-20 small:my-28 x-small:my-32 base:my-5 large:my-0 base:mt-4 rounded-md p-2'>
             <LineChart incomes={incomes} expenses={expenses}  />
            </div>
           </div>
