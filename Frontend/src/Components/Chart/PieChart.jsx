@@ -6,7 +6,7 @@ import Loading from "../Loading"
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChart = ({ expenses }) => {
+const PieChart = ({ expenses, selectOption, setSelectOption }) => {
 
     const [category, setCategory] = useState('category');
 
@@ -43,12 +43,17 @@ const PieChart = ({ expenses }) => {
     }
   return (
     <div>
-        <div className='flex justify-end'>
-        <select className='bg-[#c5c0c097] p-0.5 mb-2 rounded font-medium cursor-pointer text-center' 
-        value={category} onChange={(e) => setCategory(e.target.value)} >
+        <div className='flex justify-end gap-3'>
+          <select className='bg-[#c5c0c097] p-0.5 mb-2 rounded font-medium cursor-pointer text-center' 
+           value={category} onChange={(e) => setCategory(e.target.value)} >
              <option value="category">By Category</option>
              <option value="date">By Date</option>
-        </select>
+          </select>
+          <select className='bg-[#c5c0c097] p-0.5 mb-2 rounded font-medium cursor-pointer text-center' 
+           value={selectOption} onChange={(e) => setSelectOption(e.target.value)} >
+             <option value="expense">By Expense</option>
+             <option value="income">By Income</option>
+          </select>
         </div>
         {
             expenses.length > 0 ? (
@@ -59,8 +64,8 @@ const PieChart = ({ expenses }) => {
                 </div>
             )
         }
-        <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${expenses.length > 0 ?'hidden' : 'flex'}`}>Expense Data is empty</p>
-        <span className='text-center flex justify-center font-medium capitalize mt-5'>Expenses by {category}</span>
+        <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${expenses.length > 0 ?'hidden' : 'flex'}`}>{selectOption} Data is empty</p>
+        <span className='text-center flex justify-center font-medium capitalize mt-5'>{selectOption} by {category}</span>
     </div>
   )
 }

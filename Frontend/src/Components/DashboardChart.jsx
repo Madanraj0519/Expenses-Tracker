@@ -12,6 +12,7 @@ const DashboardChart = () => {
 
   const [incomes, setIncomes ] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [selectOption, setSelectOption] = useState('expense');
 
   const { currentUser } = useSelector(state => state.authUser);
 
@@ -52,7 +53,9 @@ const DashboardChart = () => {
 
           <div className='flex flex-col large:flex-row justify-center items-center gap-4'>
            <div className='w-[290px] small:w-[330px] x-small:w-[380px] base:w-[450px] large:w-[380px] bg-white mt-4 rounded-md p-2'>
-            <PieChart expenses={expenses} />
+             <PieChart 
+             expenses={selectOption === 'expense' ? expenses : incomes} 
+             selectOption={selectOption} setSelectOption={setSelectOption} />
            </div>
            <div className='w-[290px]  small:w-[330px] x-small:w-[380px] base:w-[450px] large:w-[770px] bg-white mt-4 rounded-md p-2'>
             <LineChart incomes={incomes} expenses={expenses}  />
