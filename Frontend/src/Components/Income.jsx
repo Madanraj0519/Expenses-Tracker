@@ -106,7 +106,7 @@ const Income = () => {
       <div className='p-2 base:p-4 w-full h-full'>
         <h4 className='text-lg base:text-xl large:text-3xl whitespace-nowrap font-semibold flex justify-center large:justify-start items-center gap-2 text-black'><FaMoneyBillWave /> Income</h4>
         <div className='mt-2 base:mt-4 w-full bg-[#ffffffdb] flex justify-center items-center p-3 base:p-6 rounded-[15px] shadow-base '>
-          <h4 className='text-base base:text-2xl font-semibold text-gray-900'>Total incomes : <span className='text-green-600'>${currentUser.user.totalIncome}</span></h4>
+          <h4 className='text-base base:text-2xl font-semibold text-gray-900'>Total Incomes : <span className='text-green-600'>${currentUser.user.totalIncome}</span></h4>
         </div>
         <div className='flex flex-col mt-5 large:flex-row justify-center base:justify-between gap-5 base:gap-3 items-start'> 
           <div className=' w-[280px] small:w-[330px] x-small:w-[390px] base:w-[400px] large:w-[500px]'>
@@ -180,7 +180,8 @@ const Income = () => {
                  {
                   showInfo === index && (
                     <div className='flex gap-1 mt-4'>
-                     <p className='flex gap-2 base:items-center text-sm font-medium'><span><GiSevenPointedStar className='mt-1 base:mt-0 text-yellow-700' /></span>{item.description ? item.description : "You did'nt given the description"}</p>
+                     <p className='flex gap-2 base:items-center text-sm font-medium'><span>
+                      <GiSevenPointedStar className='mt-1 base:mt-0 text-yellow-700' /></span>{item.description ? item.description : "You did'nt given the description"}</p>
                     </div>
                   )
                  }

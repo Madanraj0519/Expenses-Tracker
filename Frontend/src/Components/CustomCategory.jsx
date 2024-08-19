@@ -6,7 +6,7 @@ const CustomCategory = ({category, setCategory}) => {
     const [categoryList] = useState(["Movies", "Parking", "Food", "Purchase", "Games", "Dress", "Service",]);
     const [customCategories, setCustomCategories] = useState([]);
     const [newCategory, setNewCategory] = useState('');
-    const [isActive, setIsActive] = useState(false);
+    // const [isActive, setIsActive] = useState(false);
 
 
     useEffect(() => {
@@ -18,10 +18,11 @@ const CustomCategory = ({category, setCategory}) => {
 
       const handleAddCustomCategory = () => {
         if (newCategory.trim() !== '' && !customCategories.includes(newCategory)) {
-          const updatedCategories = [...customCategories, newCategory];
+          const category = newCategory.slice(0,1).toUpperCase() + newCategory.slice(1);
+          const updatedCategories = [...customCategories, category];
           setCustomCategories(updatedCategories);
           setNewCategory('');
-          setCategory(newCategory);
+          setCategory(category);
     
           // Save updated custom categories to localStorage
           localStorage.setItem('customCategories', JSON.stringify(updatedCategories));

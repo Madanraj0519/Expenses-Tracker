@@ -150,7 +150,7 @@ const Expense = () => {
                   <div className='font-medium flex flex-col justify-center x-small:justify-start items-center x-small:items-start'>
                     <div className='flex gap-2 justify-center items-center'>
                       <span className='bg-red-700 w-3 h-3 rounded-full p-1'></span>
-                      <p>{item.category}</p>
+                      <p className='capitalize'>{item.category}</p>
                     </div>
                     <div className='flex flex-col x-small:flex-row x-small:justify-between gap-2 x-small:gap-10 items-center'>
                       <p className='flex gap-1 text-sm items-center'><span className='text-yellow-500 font-semibold text-xl'>$</span> {item.amount}</p>
