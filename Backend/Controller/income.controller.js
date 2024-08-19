@@ -72,7 +72,7 @@ const deleteIncome = async (req, res, next) => {
 
         res.status(200).json({
             success : true,
-            message : 'Income saved successfully',
+            message : 'Income deleted successfully',
             user,
         });
 

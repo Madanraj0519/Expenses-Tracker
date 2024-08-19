@@ -13,10 +13,10 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [isActive, setIsActive] = useState(false);
+  // const [isActive, setIsActive] = useState(false);
 
 
-  // const {currentUser} = useSelector((state) => state.authUser);
+  const { loading } = useSelector((state) => state.authUser);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -87,9 +87,9 @@ const SignUp = () => {
                 onChange={(e) => setUserName(e.target.value)} id='userName' className=' p-3 rounded-lg font-medium bg-[#090e3db0]' />
                 <input type='text' placeholder='User Email' value={email}
                 onChange={(e) => setEmail(e.target.value)} id='userEmail' className='p-3 rounded-lg font-medium bg-[#090e3db0]' />
-                <input type='text' placeholder='User Password' value={password}
+                <input type='password' placeholder='User Password' value={password}
                 onChange={(e) => setPassword(e.target.value)} id='userPassword' className='p-3 rounded-lg font-medium bg-[#090e3db0]' />
-                <button type='submit' className='bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>Sign Up</button>
+                <button type='submit' className='bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? "Loading" : "Sign Up"}</button>
             </form>
       <div className='base:flex gap-2 mt-5 font-semibold'>
         <p>Already having a account?</p>

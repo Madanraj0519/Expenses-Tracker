@@ -1,6 +1,7 @@
 import React from 'react';
 import moment from 'moment-timezone';
 import { Line } from 'react-chartjs-2';
+import Loading from "../Loading"
 import { Chart as ChartJS, LineElement, PointElement, Tooltip, Legend, CategoryScale, LinearScale } from 'chart.js';
 
 ChartJS.register(LineElement, PointElement, Tooltip, Legend, CategoryScale, LinearScale);
@@ -54,7 +55,16 @@ const LineChart = ({incomes, expenses}) => {
 
     return (
         <div>
-            <Line data={data} />
+            {
+                incomes.length > 0 ? (
+                    <Line data={data} />
+                ) : (
+                    <div className='-mt-52'>
+                      <Loading />
+                    </div>
+                )
+            }
+            <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${incomes.length > 0 ?'hidden' : 'flex -mt-52'}`}>Income & Expense data is empty</p>
             <span className='text-center flex justify-center font-medium capitalize mt-5'>Expenses & Income Line chart</span>
         </div>
     )

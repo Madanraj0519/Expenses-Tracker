@@ -7,6 +7,7 @@ import {signInStart, signInSuccess, signInFailure} from "../Feature/Auth/userAut
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment-timezone';
 import Loading from './Loading';
+import {toast} from "react-hot-toast";
 
 
 
@@ -49,12 +50,14 @@ const Income = () => {
         description
       });
 
-      if(!response){
+      if(response.data.success === false){
         dispatch(signInFailure(response.data));
+        toast.error(response.data.message);
       }
 
 
       dispatch(signInSuccess(response.data));
+      toast.success(response.data.message);
 
       // console.log(response.data);
 
@@ -71,10 +74,12 @@ const Income = () => {
 
       if(!response){
         dispatch(signInFailure(response.data));
+        toast.error(response.data.message);
       }
 
 
       dispatch(signInSuccess(response.data));
+      toast.error(response.data.message);
 
       console.log(response.data);
 

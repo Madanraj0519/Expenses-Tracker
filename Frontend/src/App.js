@@ -5,6 +5,7 @@ import SignIn from './Pages/SignIn'
 import SignUp from './Pages/Signup'
 import DashBoard from './Pages/DashBoard'
 import UserPrivateRoute from './PrivateRoutes/UserPrivateRoute'
+import {Toaster} from "react-hot-toast"
 
 function App() {
 
@@ -18,6 +19,8 @@ function App() {
           <Route path='/dashboard' element={<DashBoard />} />
         </Route> 
       </Routes>
+
+      <Toaster position="top-right" reverseOrder={true} />
     </BrowserRouter>
     </>
   )

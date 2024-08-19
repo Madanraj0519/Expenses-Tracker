@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 import {signInStart, signInSuccess, signInFailure} from "../Feature/Auth/userAuthSlice";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from "../Constant/Backend/axiosInstance";
 import logo from "../assets/expense-logo.png";
 
@@ -16,6 +16,8 @@ const SignIn = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const {loading} = useSelector(state => state.authUser);
 
 
   const handleLogin = async(e) => {
@@ -79,7 +81,7 @@ const SignIn = () => {
                 onChange={(e) => setEmail(e.target.value)} id='userEmail' className=' p-3 rounded-lg font-medium bg-[#090e3db0]' />
                 <input type='password' placeholder='User Password' value={password}
                 onChange={(e) => setPassword(e.target.value)} id='userPassword' className=' p-3 rounded-lg font-medium bg-[#090e3db0]' />
-                <button type='submit' className='bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>Sign In</button>
+                <button type='submit' className='bg-green-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>{loading ? "Loading" : "Sign In"}</button>
           </form>
       <div className='base:flex gap-2 mt-5 font-semibold'>
         <p>Don't Have a account?</p>

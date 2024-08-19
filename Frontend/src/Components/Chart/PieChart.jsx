@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import moment from 'moment-timezone';
-
+import Loading from "../Loading"
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -50,8 +50,17 @@ const PieChart = ({ expenses }) => {
              <option value="date">By Date</option>
         </select>
         </div>
-        <Pie className='cursor-pointer' data={data} />
-        <span className='text-center flex justify-center font-medium capitalize'>Expenses by {category}</span>
+        {
+            expenses.length > 0 ? (
+                <Pie className='cursor-pointer' data={data} />
+            ) : (
+                <div className='-mt-52'>
+                    <Loading />
+                </div>
+            )
+        }
+        <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${expenses.length > 0 ?'hidden' : 'flex -mt-56'}`}>Expense Data is empty</p>
+        <span className='text-center flex justify-center font-medium capitalize mt-5'>Expenses by {category}</span>
     </div>
   )
 }

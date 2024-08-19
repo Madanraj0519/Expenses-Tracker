@@ -10,6 +10,7 @@ import CustomCategory from './CustomCategory';
 import moment from 'moment-timezone';
 import ExpenseList from './ExpenseList';
 import Loading from './Loading';
+import {toast} from "react-hot-toast";
 
 
 const Expense = () => {
@@ -40,13 +41,14 @@ const Expense = () => {
         description
       });
 
-      if(!response){
+      if(response.data.success === false){
         dispatch(signInFailure(response.data));
+        toast.error(response.data.message);
       }
 
 
       dispatch(signInSuccess(response.data));
-
+      toast.success(response.data.message);
       // console.log(response.data);
 
     } catch (error) {
@@ -60,14 +62,14 @@ const Expense = () => {
       dispatch(signInStart());
       const response = await axiosInstance.delete(`/api/expense/deleteExpense/${id}`);
 
-      if(!response){
+      if(response.data.success === false){
         dispatch(signInFailure(response.data));
+        toast.error(response.data.message);
       }
 
-
       dispatch(signInSuccess(response.data));
-
-      console.log(response.data);
+      toast.error(response.data.message);
+      // console.log(response.data);
 
     } catch (error) {
       console.error(error);
