@@ -163,7 +163,7 @@ const Expense = () => {
                   {
                     showInfo === index && (
                     <div className='flex gap-1 mt-4'>
-                     <p className='flex gap-2 base:items-center text-sm font-medium'><span><GiSevenPointedStar className='mt-1 base:mt-0 text-yellow-700' /></span>{item.description}</p>
+                     <p className='flex gap-2 base:items-center text-sm font-medium'><span><GiSevenPointedStar className='mt-1 base:mt-0 text-yellow-700' /></span>{item.description ? item.description : "You did'nt given the description"}</p>
                     </div>
                     )
                    }
