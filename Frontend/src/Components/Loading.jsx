@@ -3,7 +3,7 @@ import loading from "../assets/expense-loading-unscreen.gif";
 
 const Loading = () => {
   return (
-    <div className='w-full h-screen flex justify-center items-center'>
+    <div>
       <img className='w-[250px] h-[250px] object-cover' src={loading} />
     </div>
   )

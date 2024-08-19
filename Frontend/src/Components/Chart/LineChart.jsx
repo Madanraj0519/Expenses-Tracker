@@ -59,12 +59,12 @@ const LineChart = ({incomes, expenses}) => {
                 incomes.length > 0 ? (
                     <Line data={data} />
                 ) : (
-                    <div className='-mt-52'>
+                    <div className='flex justify-center items-center'>
                       <Loading />
                     </div>
                 )
             }
-            <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${incomes.length > 0 ?'hidden' : 'flex -mt-52'}`}>Income & Expense data is empty</p>
+            <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${incomes.length > 0 ?'hidden' : 'flex'}`}>Income & Expense data is empty</p>
             <span className='text-center flex justify-center font-medium capitalize mt-5'>Expenses & Income Line chart</span>
         </div>
     )

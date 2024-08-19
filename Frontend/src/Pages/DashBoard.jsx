@@ -22,7 +22,9 @@ const DashBoard = () => {
     return (
       <div className="w-full h-full">
         {loading ? (
-          <Loading />
+          <div className="w-full h-screen flex justify-center items-center">
+            <Loading />
+          </div>
         ) : (
            <>
             <div className={`max-w-full mx-2 base:mx-8 flex flex-col base:flex-row justify-between  x-small:items-start gap-2 base:gap-4 large:items-start h-full py-4`}>

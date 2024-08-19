@@ -54,12 +54,12 @@ const PieChart = ({ expenses }) => {
             expenses.length > 0 ? (
                 <Pie className='cursor-pointer' data={data} />
             ) : (
-                <div className='-mt-52'>
+                <div className='flex justify-center items-center'>
                     <Loading />
                 </div>
             )
         }
-        <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${expenses.length > 0 ?'hidden' : 'flex -mt-56'}`}>Expense Data is empty</p>
+        <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${expenses.length > 0 ?'hidden' : 'flex'}`}>Expense Data is empty</p>
         <span className='text-center flex justify-center font-medium capitalize mt-5'>Expenses by {category}</span>
     </div>
   )

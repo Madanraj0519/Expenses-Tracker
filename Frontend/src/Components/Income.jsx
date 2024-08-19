@@ -160,10 +160,10 @@ const Income = () => {
                   ))
               ) : (
                 <div>
-                  <div className='-mt-60 '>
+                  <div className='flex justify-center items-center'>
                     <Loading />
                   </div>
-                   <h3 className='text-center -mt-60 base:-mt-72 font-medium'>Items not found</h3>
+                   <h3 className='text-center font-medium'>Items not found</h3>
                 </div>
                   )
              }
