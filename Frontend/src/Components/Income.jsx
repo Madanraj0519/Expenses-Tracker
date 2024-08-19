@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FaMoneyBillWave, FaCalendar, FaPlusCircle } from "react-icons/fa";
+import { FaMoneyBillWave, FaCalendar, FaPlusCircle, FaArrowRight } from "react-icons/fa";
 import { FcMoneyTransfer } from "react-icons/fc";
 import { MdDelete } from "react-icons/md";
+import { GiSevenPointedStar } from "react-icons/gi";
 import axiosInstance from "../Constant/Backend/axiosInstance";
 import {signInStart, signInSuccess, signInFailure} from "../Feature/Auth/userAuthSlice";
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,6 +22,7 @@ const Income = () => {
   const [date, setDate] = useState('');
   const [incomes, setIncomes] = useState([]);
   const [error, setError] = useState('');
+  const [showInfo, setShowInfo] = useState('');
 
   const {currentUser} = useSelector(state => state.authUser);
   const dispatch = useDispatch();
@@ -90,6 +92,14 @@ const Income = () => {
     }
   };
 
+  const handleDescriptionInfo = (index) =>{
+    if(showInfo !== index){
+      setShowInfo(index);
+    }else{
+      setShowInfo('');
+    }
+  }
+
 
   return (
     <div className='w-full h-full text-black'>
@@ -145,8 +155,13 @@ const Income = () => {
              {
               incomes.length > 0 ? (
                 
-                  incomes.map((item, index) => (
-                    <div className='flex justify-between items-center mt-5 rounded-md bg-white rounded-base p-4' key={index}>
+               incomes.map((item, index) => (
+                <div className='mt-5 rounded-md bg-white rounded-base p-4' key={index}>
+                 <div onClick={() => handleDescriptionInfo(index)}  className='flex justify-end items-end'>
+                   <FaArrowRight className={`${showInfo === index ? 'rotate-90' : 'rotate-0'} font-semibold cursor-pointer`}  />
+                 </div>
+
+                 <div className='flex justify-between items-center mt-2' key={index}>
                   <FcMoneyTransfer className='text-5xl' />
     
                   <div className='font-medium flex flex-col justify-center x-small:justify-start items-center x-small:items-start'>
@@ -162,6 +177,14 @@ const Income = () => {
     
                   <MdDelete className='text-3xl cursor-pointer hover:text-red-500' onClick={() => handleDeleteIncome(item._id)} />
                  </div>
+                 {
+                  showInfo === index && (
+                    <div className='flex gap-1 mt-4'>
+                     <p className='flex gap-2 base:items-center text-sm font-medium'><span><GiSevenPointedStar className='mt-1 base:mt-0 text-yellow-700' /></span>{item.description}</p>
+                    </div>
+                  )
+                 }
+                </div>
                   ))
               ) : (
                 <div>
