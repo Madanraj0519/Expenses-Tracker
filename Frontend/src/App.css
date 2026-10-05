@@ -1,115 +1,99 @@
 #root {
-
-  background-color: #9c99d5a0;
-
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-.scroll::-webkit-scrollbar{
-  background-color: transparent;
-}
-/* 
-.container{
-  background-position: top;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: url("https://www.shutterstock.com/image-photo/money-tracker-app-budget-expense-260nw-1977696401.jpg");
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index:-1;
-} */
-
-.detail-container {
-  min-height: calc(100vh-250px);
-}
-
-.addList{
-  margin-top: -14PX;
-  height: 44px;
-  width: 44px;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #f9f9f9;
-  border-radius: 50%;
-  border: 2px solid white;
-  cursor: pointer;
+  flex-direction: column;
 }
 
-.addList   span {
-  background-color: rgb(249, 249, 249);
-  display: inline-block;
+html.dark #root {
+  background: radial-gradient(circle at 10% 20%, rgba(30, 41, 59, 0.4) 0%, rgba(10, 14, 23, 1) 90%);
 }
 
-.addList   span:first-child{
-  height: 2px;
-  transform: translate(1px, 0px) rotate(0deg);
-  width: 16px;
+html.light #root {
+  background: radial-gradient(circle at 10% 20%, rgba(241, 245, 249, 0.9) 0%, rgba(226, 232, 240, 0.6) 100%);
 }
 
-.addList   span:nth-child(2){
-  height: 16px;
-  transform: translateX(-8px) rotate(0deg);
-  width: 2px;
+/* Datepicker tweaks */
+.react-datepicker-wrapper {
+  width: 100%;
 }
 
-.addList.active{
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #f3d10f;
-  border: 2px solid #f3b20f;
-  cursor: pointer;
-}
-.addList.active  span:first-child{
-  height: 2px;
-  transform: translateY(0px) translateX(6px) rotate(-45deg);
-  width: 22px;
-  transition: all 0.3s ease;
+/* Dark Mode Datepicker */
+html.dark .react-datepicker {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+  font-family: inherit !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
 }
 
-.addList.active  span:nth-child(2){
-  height: 10px;
-  transform: translateX(-18px) translateY(5px) rotate(-46deg);
-  width: 2px;
-  transition: all 0.3s ease;
+html.dark .react-datepicker__header {
+  background-color: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
 }
 
-.control a {
-  text-decoration:none;
+html.dark .react-datepicker__current-month,
+html.dark .react-datepicker-time__header,
+html.dark .react-datepicker-year-header,
+html.dark .react-datepicker__day-name {
+  color: #f1f5f9 !important;
+}
+
+html.dark .react-datepicker__day {
+  color: #cbd5e1 !important;
+  border-radius: 8px !important;
+}
+
+html.dark .react-datepicker__day:hover {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+html.dark .react-datepicker__day--selected,
+html.dark .react-datepicker__day--keyboard-selected {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+/* Light Mode Datepicker */
+html.light .react-datepicker {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  font-family: inherit !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .react-datepicker__header {
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html.light .react-datepicker__current-month,
+html.light .react-datepicker-time__header,
+html.light .react-datepicker-year-header,
+html.light .react-datepicker__day-name {
+  color: #1e293b !important;
+}
+
+html.light .react-datepicker__day {
+  color: #334155 !important;
+  border-radius: 8px !important;
+}
+
+html.light .react-datepicker__day:hover {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+html.light .react-datepicker__day--selected,
+html.light .react-datepicker__day--keyboard-selected {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: bold;
 }

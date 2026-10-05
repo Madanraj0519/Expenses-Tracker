@@ -1,73 +1,127 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import moment from 'moment-timezone';
-import Loading from "../Loading"
+import { getCategoryTheme } from '../../Constant/categories';
+import { useTheme } from '../../Context/ThemeContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChart = ({ expenses, selectOption, setSelectOption }) => {
+const PieChart = ({ expenses = [], selectOption, setSelectOption }) => {
+  const [groupBy, setGroupBy] = useState('category'); // 'category' or 'date'
+  const { isDark } = useTheme();
 
-    const [category, setCategory] = useState('category');
+  const safeData = Array.isArray(expenses) ? expenses : [];
 
-    const categoryTotals = expenses.reduce((acc, expense) =>{
-        acc[category === 'date' ? moment(expense.date).format('MMM Do YYYY') : expense.category ] = (acc[expense.date] || 0) + expense.amount;
-        return acc;
-    }, {});
+  const totalsMap = safeData.reduce((acc, item) => {
+    if (!item) return acc;
+    const key = groupBy === 'date' 
+      ? moment(item.date).format('MMM Do YYYY') 
+      : (item.category || 'Uncategorized');
+    
+    acc[key] = (acc[key] || 0) + (Number(item.amount) || 0);
+    return acc;
+  }, {});
 
+  const labels = Object.keys(totalsMap);
+  const values = Object.values(totalsMap);
 
-    const getRandomColor = () => {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
+  const colors = labels.map((label) => {
+    return getCategoryTheme(label).color;
+  });
+
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        data: values,
+        backgroundColor: colors,
+        hoverBackgroundColor: colors,
+        borderColor: isDark ? '#0f172a' : '#ffffff',
+        borderWidth: 2,
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          color: isDark ? '#cbd5e1' : '#475569',
+          font: {
+            family: 'Plus Jakarta Sans',
+            size: 11,
+            weight: 500,
+          },
+          padding: 12,
+          usePointStyle: true,
+          pointStyle: 'circle',
         }
-        return color;
-    };
-
-
-    const categories = Object.keys(categoryTotals);
-
-    const colors = categories.map(() => getRandomColor());
-
-    const data = {
-        labels : Object.keys(categoryTotals),
-        datasets : [
-            {
-                label : 'Expense by category',
-                data : Object.values(categoryTotals),
-                backgroundColor : colors,
-                hoverBackgroundColor: colors,
-            }
-        ]
+      },
+      tooltip: {
+        backgroundColor: isDark ? '#0f172a' : '#ffffff',
+        titleColor: isDark ? '#ffffff' : '#0f172a',
+        bodyColor: isDark ? '#cbd5e1' : '#475569',
+        borderColor: isDark ? '#334155' : '#e2e8f0',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        callbacks: {
+          label: (context) => {
+            const val = context.raw || 0;
+            return ` $${Number(val).toFixed(2)}`;
+          }
+        }
+      }
     }
+  };
+
   return (
-    <div>
-        <div className='flex justify-end gap-3'>
-          <select className='bg-[#c5c0c097] p-0.5 mb-2 rounded font-medium cursor-pointer text-center' 
-           value={category} onChange={(e) => setCategory(e.target.value)} >
-             <option value="category">By Category</option>
-             <option value="date">By Date</option>
+    <div className='flex flex-col h-full'>
+      <div className='flex items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-200 dark:border-slate-700/60'>
+        <span className='text-xs font-semibold text-slate-500 dark:text-slate-300 uppercase tracking-wider'>
+          Distribution
+        </span>
+        <div className='flex items-center gap-1.5'>
+          <select
+            className='bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1 text-xs font-medium cursor-pointer focus:outline-none'
+            value={groupBy}
+            onChange={(e) => setGroupBy(e.target.value)}
+          >
+            <option value="category">By Category</option>
+            <option value="date">By Date</option>
           </select>
-          <select className='bg-[#c5c0c097] p-0.5 mb-2 rounded font-medium cursor-pointer text-center' 
-           value={selectOption} onChange={(e) => setSelectOption(e.target.value)} >
-             <option value="expense">By Expense</option>
-             <option value="income">By Income</option>
+          <select
+            className='bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-lg px-2 py-1 text-xs font-medium cursor-pointer focus:outline-none'
+            value={selectOption}
+            onChange={(e) => setSelectOption(e.target.value)}
+          >
+            <option value="expense">Expenses</option>
+            <option value="income">Income</option>
           </select>
         </div>
-        {
-            expenses.length > 0 ? (
-                <Pie className='cursor-pointer' data={data} />
-            ) : (
-                <div className='flex justify-center items-center'>
-                    <Loading />
-                </div>
-            )
-        }
-        <p className={`text-center  justify-center font-medium capitalize mt-5 text-red-500 ${expenses.length > 0 ?'hidden' : 'flex'}`}>{selectOption} Data is empty</p>
-        <span className='text-center flex justify-center font-medium capitalize mt-5'>{selectOption} by {category}</span>
-    </div>
-  )
-}
+      </div>
 
-export default PieChart
+      <div className='flex-1 flex flex-col items-center justify-center min-h-[240px]'>
+        {safeData.length > 0 ? (
+          <div className='w-full max-w-[280px] mx-auto'>
+            <Pie data={chartData} options={chartOptions} />
+          </div>
+        ) : (
+          <div className='flex flex-col items-center justify-center p-6 text-slate-400 dark:text-slate-500'>
+            <p className='text-sm font-medium'>No {selectOption} data recorded</p>
+          </div>
+        )}
+      </div>
+
+      <div className='mt-2 pt-2 text-center text-xs text-slate-500 dark:text-slate-400 font-medium capitalize border-t border-slate-200 dark:border-slate-800'>
+        {selectOption} breakdown by {groupBy}
+      </div>
+    </div>
+  );
+};
+
+export default PieChart;
