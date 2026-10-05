@@ -1,99 +1,173 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from "../Constant/Backend/axiosInstance";
-import { FaChartLine } from "react-icons/fa";
-import { useDispatch, useSelector } from 'react-redux';
+import { FaChartLine, FaArrowTrendUp, FaArrowTrendDown, FaWallet } from "react-icons/fa6";
+import { useSelector } from 'react-redux';
 import PieChart from './Chart/PieChart';
 import LineChart from "./Chart/LineChart";
 import ExpenseSummary from "./ExpenseSummary";
 import ExportCSV from "./ExportCSV";
-import ExportPDF from "./ExportPDF"
+import ExportPDF from "./ExportPDF";
+import Loading from "./Loading";
+import { toast } from "react-hot-toast";
 
 const DashboardChart = () => {
-
-  const [incomes, setIncomes ] = useState([]);
+  const [incomes, setIncomes] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [selectOption, setSelectOption] = useState('expense');
+  const [isLoading, setIsLoading] = useState(true);
 
   const { currentUser } = useSelector(state => state.authUser);
 
-  const total = currentUser.user.totalIncome - currentUser.user.totalExpense;
+  const totalIncome = Number(currentUser?.user?.totalIncome ?? currentUser?.totalIncome ?? 0);
+  const totalExpense = Number(currentUser?.user?.totalExpense ?? currentUser?.totalExpense ?? 0);
+  const netBalance = totalIncome - totalExpense;
 
   useEffect(() => {
+    let isMounted = true;
 
-    const handleIncomesAndExpenses = async() => {
+    const handleIncomesAndExpenses = async () => {
       try {
-        const [ incomesRes, expensesRes ] = await Promise.all([
+        setIsLoading(true);
+        const [incomesRes, expensesRes] = await Promise.all([
           axiosInstance.get('/api/income/getIncome'),
           axiosInstance.get('/api/expense/getExpenseChart'),
         ]);
 
-        setIncomes(incomesRes.data.incomes);
-        setExpenses(expensesRes.data.expenses);
-
-      } catch (error) {
-        console.log(error);
+        if (isMounted) {
+          setIncomes(incomesRes.data?.incomes || []);
+          setExpenses(expensesRes.data?.expenses || []);
+        }
+      } catch (err) {
+        const errorMsg = err.friendlyMessage || err.message || "Failed to load dashboard data.";
+        toast.error(errorMsg);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     handleIncomesAndExpenses();
-  }, [])
 
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
-    <div className='w-full h-full text-black'>
-      <div className='p-4 base:p-4 h-full'>
+    <div className='w-full space-y-6'>
+      {/* Top Header & Export Actions */}
+      <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800'>
+        <div>
+          <h2 className='text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5'>
+            <FaChartLine className='text-blue-500' /> Financial Overview
+          </h2>
+          <p className='text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1'>
+            Track your cash flow, analyze spending patterns, and monitor net balance.
+          </p>
+        </div>
+        <div className='flex items-center gap-2.5 flex-wrap'>
+          <ExportCSV expenses={expenses} />
+          <ExportPDF expenses={expenses} />
+        </div>
+      </div>
 
-         <div className='flex flex-col large:flex-row justify-between items-center gap-4'>
-           <h4 className='text-lg base:text-xl large:text-3xl whitespace-nowrap font-semibold flex justify-start items-center gap-2 text-black'><FaChartLine /> All Transaction</h4>
-           <div className='flex justify-center items-center gap-2'>
-             <ExportCSV expenses={expenses} />
-             <ExportPDF expenses={expenses}  />
-           </div>
-         </div>
+      {isLoading ? (
+        <div className='flex justify-center items-center h-72'>
+          <Loading />
+        </div>
+      ) : (
+        <>
+          {/* Key Metric KPI Cards */}
+          <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+            {/* Total Income Card */}
+            <div className='p-5 rounded-2xl glass-card border border-emerald-500/30 dark:border-emerald-500/20 shadow-glow-green relative overflow-hidden'>
+              <div className='flex items-center justify-between'>
+                <span className='text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>
+                  Total Income
+                </span>
+                <span className='w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-sm'>
+                  <FaArrowTrendUp />
+                </span>
+              </div>
+              <div className='mt-3'>
+                <h3 className='text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400'>
+                  +${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </h3>
+                <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>Cumulative recorded earnings</p>
+              </div>
+            </div>
 
-          <div className='flex flex-col large:flex-row justify-center items-center gap-4'>
-           <div className='w-[290px] small:w-[330px] x-small:w-[380px] base:w-[450px] large:w-[380px] bg-white mt-4 rounded-md p-2'>
-             <PieChart 
-             expenses={selectOption === 'expense' ? expenses : incomes} 
-             selectOption={selectOption} setSelectOption={setSelectOption} />
-           </div>
-           <div className='w-[500px] small:w-[550px] x-small:w-[650px] base:w-[450px] large:w-[770px] 
-           rotate-90 base:rotate-0 bg-white my-28 x-small:my-36 base:my-5 large:my-0 base:mt-4 rounded-md p-2'>
-            <LineChart incomes={incomes} expenses={expenses}  />
-           </div>
+            {/* Total Expense Card */}
+            <div className='p-5 rounded-2xl glass-card border border-rose-500/30 dark:border-rose-500/20 shadow-glow-red relative overflow-hidden'>
+              <div className='flex items-center justify-between'>
+                <span className='text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>
+                  Total Expenses
+                </span>
+                <span className='w-8 h-8 rounded-full bg-rose-500/10 flex items-center justify-center text-rose-600 dark:text-rose-400 text-sm'>
+                  <FaArrowTrendDown />
+                </span>
+              </div>
+              <div className='mt-3'>
+                <h3 className='text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400'>
+                  -${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </h3>
+                <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>Cumulative recorded spending</p>
+              </div>
+            </div>
+
+            {/* Net Balance Card */}
+            <div className={`p-5 rounded-2xl glass-card border relative overflow-hidden ${
+              netBalance >= 0 ? "border-blue-500/30 dark:border-blue-500/20 shadow-glow-blue" : "border-amber-500/30 dark:border-amber-500/20"
+            }`}>
+              <div className='flex items-center justify-between'>
+                <span className='text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider'>
+                  Net Savings
+                </span>
+                <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
+                  netBalance >= 0 ? "bg-blue-500/10 text-blue-600 dark:text-blue-400" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                }`}>
+                  <FaWallet />
+                </span>
+              </div>
+              <div className='mt-3'>
+                <h3 className={`text-2xl sm:text-3xl font-extrabold ${
+                  netBalance >= 0 ? "text-blue-600 dark:text-blue-400" : "text-amber-600 dark:text-amber-400"
+                }`}>
+                  ${netBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </h3>
+                <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>
+                  {netBalance >= 0 ? "Healthy financial surplus" : "Expenses exceed income"}
+                </p>
+              </div>
+            </div>
           </div>
 
+          {/* Charts Grid */}
+          <div className='grid grid-cols-1 lg:grid-cols-12 gap-5'>
+            {/* Category / Date Breakdown */}
+            <div className='lg:col-span-5 p-4 sm:p-5 rounded-2xl glass-card border border-slate-200 dark:border-slate-800 shadow-md'>
+              <PieChart
+                expenses={selectOption === 'expense' ? expenses : incomes}
+                selectOption={selectOption}
+                setSelectOption={setSelectOption}
+              />
+            </div>
 
-         <div className='flex flex-col justify-center items-center large:flex-row w-full h-full gap-3 mt-5'>
+            {/* Cash Flow Line Trends */}
+            <div className='lg:col-span-7 p-4 sm:p-5 rounded-2xl glass-card border border-slate-200 dark:border-slate-800 shadow-md'>
+              <LineChart incomes={incomes} expenses={expenses} />
+            </div>
+          </div>
 
-           <div className=" w-[280px] small:w-[330px] base:w-[500px] large:w-[380px]">
-             <div className='flex justify-evenly items-center gap-2'>
-                <div className='bg-[#e9e3e3af] text-[#090e3dd6] p-4 rounded-md'>
-                  <h3  className='text-center font-semibold text-xl'>Total Income</h3>
-                  <p className='text-center font-extrabold text-xl'>${currentUser.user.totalIncome}</p>
-                </div>
-                <div className='bg-[#e9e3e3af] text-[#090e3dd6] p-4 rounded-md'>
-                  <h3  className='text-center font-semibold text-xl'>Total Expense</h3>
-                  <p  className='text-center font-extrabold text-xl'>${currentUser.user.totalExpense}</p>
-                </div>
-             </div>
-             <div className='p-3'>
-                <div className='bg-[#e9e3e3af] text-[#090e3dd6] p-4 rounded-md'>
-                  <h3  className='text-center font-semibold text-xl'>Total Balance</h3>
-                  <p className={`text-center font-extrabold text-xl 
-                    ${ total < 0 ? "text-red-700" : "text-green-700"}`}>${(total).toFixed(2)}</p>
-                </div>
-             </div>
-           </div>
-
-
-           <div className=' w-[280px] small:w-[330px] x-small:w-[380px] base:w-[450px] large:w-[770px] bg-[#e9e3e3af]'>
-             <ExpenseSummary expenses={expenses} />
-           </div>
-         </div>
-      </div>
+          {/* Monthly Category Summary Breakdown */}
+          <div className='rounded-2xl glass-card border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-md'>
+            <ExpenseSummary expenses={expenses} />
+          </div>
+        </>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default DashboardChart
+export default DashboardChart;

@@ -1,12 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Outlet, Navigate } from "react-router-dom"
+import { Outlet, Navigate } from "react-router-dom";
 
 const UserPrivateRoute = () => {
-  
-    const {currentUser} = useSelector(state => state.authUser);
+    const { currentUser } = useSelector(state => state.authUser);
+    const token = localStorage.getItem("token");
 
-    return currentUser ? <Outlet /> : <Navigate to={'/'} />
-}
+    const isAuthenticated = Boolean(currentUser && token);
 
-export default UserPrivateRoute
+    return isAuthenticated ? <Outlet /> : <Navigate to={'/'} replace />;
+};
+
+export default UserPrivateRoute;
