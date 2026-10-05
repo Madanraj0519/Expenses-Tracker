@@ -10,6 +10,7 @@ import { useTheme } from './Context/ThemeContext';
 
 function App() {
   const { isDark } = useTheme();
+  
 
   return (
     <>
