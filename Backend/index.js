@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(cookieParser());
 
 const allowedOrigins = [
-    'http://localhost:3000',
+    // 'http://localhost:3000',
     'https://expenses-trackers-front-end.vercel.app'
 ];
 
