@@ -3,7 +3,9 @@ import { useTheme } from '../Context/ThemeContext';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
 const ThemeToggle = ({ compact = false, className = '' }) => {
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { 
+    // theme, 
+    toggleTheme, isDark } = useTheme();
 
   if (compact) {
     return (
