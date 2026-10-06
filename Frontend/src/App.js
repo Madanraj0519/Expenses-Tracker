@@ -7,6 +7,7 @@ import DashBoard from './Pages/DashBoard';
 import UserPrivateRoute from './PrivateRoutes/UserPrivateRoute';
 import { Toaster } from "react-hot-toast";
 import { useTheme } from './Context/ThemeContext';
+import { CurrencyProvider } from './Context/CurrencyContext';
 
 function App() {
   const { isDark } = useTheme();
@@ -18,7 +19,7 @@ function App() {
           <Route path='/' element={<SignIn />} />
           <Route path='/sign-up' element={<SignUp />} />
           <Route element={<UserPrivateRoute />}>
-            <Route path='/dashboard' element={<DashBoard />} />
+            <Route path='/dashboard' element={<CurrencyProvider><DashBoard /></CurrencyProvider>} />
           </Route>
         </Routes>
 

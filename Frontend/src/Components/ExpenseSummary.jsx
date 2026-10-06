@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { getCategoryTheme } from '../Constant/categories';
+import { useCurrency } from '../Context/CurrencyContext';
 
 const ExpenseSummary = ({ expenses = [] }) => {
   const safeExpenses = Array.isArray(expenses) ? expenses : [];
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const { formatCurrency } = useCurrency();
 
   const handleDateChange = (event) => {
     if (event.target.value) {
@@ -69,7 +71,7 @@ const ExpenseSummary = ({ expenses = [] }) => {
           <div className="text-right pl-3 border-l border-slate-200 dark:border-slate-700">
             <span className="text-xs text-slate-500 dark:text-slate-400 block">Month Total</span>
             <span className="text-base font-bold text-rose-600 dark:text-rose-400">
-              ${totalMonthlyExpenses.toFixed(2)}
+              {formatCurrency(totalMonthlyExpenses)}
             </span>
           </div>
         </div>
@@ -95,7 +97,7 @@ const ExpenseSummary = ({ expenses = [] }) => {
                     />
                     <span className="text-sm font-semibold text-slate-900 dark:text-white capitalize">{category}</span>
                   </div>
-                  <span className="text-sm font-bold text-slate-800 dark:text-slate-200">${amount.toFixed(2)}</span>
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{formatCurrency(amount)}</span>
                 </div>
 
                 {/* Mini Progress Bar */}

@@ -14,6 +14,7 @@ A full-stack personal finance application for recording income and expenses, tra
 - Optional expense category suggestions based on the user's own history and conservative merchant keywords; suggestions require confirmation.
 - Month-scoped CSV and PDF exports.
 - Responsive dashboard, light/dark themes, and accessible form controls.
+- Automatic region-aware currency display and entry for India (INR), United States (USD), United Kingdom (GBP), Eurozone (EUR), Canada (CAD), Australia (AUD), and Japan (JPY).
 
 ## Project structure
 
@@ -112,6 +113,12 @@ Transaction list endpoints accept `page`, `limit` (maximum 100), `search`, and s
 ## Smart insights and privacy
 
 The spending insight engine currently uses transparent server-side calculations rather than an external LLM: it compares budget usage and daily spending pace, flags month-over-month category changes only when the difference is material, and suppresses unusual-spending claims until there are at least two historical months and seven elapsed days. Category suggestions use the authenticated user's own saved descriptions first, followed by a small keyword map. The displayed match strength is a heuristic, not a calibrated probability. Suggestions never overwrite a transaction automatically, and no financial data is sent to a third-party AI service. This keeps the feature useful and explainable while leaving room for an opt-in model integration later.
+
+## Regional currencies
+
+The dashboard detects a supported region from the browser locale (India/INR is the fallback) and provides a region selector to override it. Supported currencies are INR, USD, GBP, EUR, CAD, AUD, and JPY. Live USD-base rates are fetched from [open.er-api.com](https://open.er-api.com/) and refreshed at least every 24 hours; the last saved rate remains available with a stale-rate indicator if the service cannot be reached. If there is no usable rate, local-currency entry is disabled instead of saving an incorrectly converted value.
+
+Amounts already stored by the app are treated as USD base amounts. New transaction and budget amounts entered in the selected currency are converted to USD before saving; charts, totals, budgets, insights, reports, and exports convert that base amount to the selected currency for presentation. Existing records are not rewritten. Displayed conversions use the latest available rate, not the exchange rate on the transaction date; changing the selected region does not change stored account balances in base USD.
 
 ## Deployment configuration
 

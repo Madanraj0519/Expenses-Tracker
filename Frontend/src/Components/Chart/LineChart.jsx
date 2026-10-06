@@ -12,11 +12,13 @@ import {
   Filler
 } from 'chart.js';
 import { useTheme } from '../../Context/ThemeContext';
+import { useCurrency } from '../../Context/CurrencyContext';
 
 ChartJS.register(LineElement, PointElement, Tooltip, Legend, CategoryScale, LinearScale, Filler);
 
 const LineChart = ({ incomes = [], expenses = [] }) => {
   const { isDark } = useTheme();
+  const { formatCurrency } = useCurrency();
   const safeIncomes = Array.isArray(incomes) ? incomes : [];
   const safeExpenses = Array.isArray(expenses) ? expenses : [];
 
@@ -106,7 +108,7 @@ const LineChart = ({ incomes = [], expenses = [] }) => {
             family: 'Plus Jakarta Sans',
             size: 11,
           },
-          callback: (value) => `$${value}`,
+          callback: (value) => formatCurrency(value, { maximumFractionDigits: 0 }),
         }
       }
     },
@@ -137,7 +139,7 @@ const LineChart = ({ incomes = [], expenses = [] }) => {
           label: (context) => {
             const label = context.dataset.label || '';
             const val = context.parsed.y || 0;
-            return ` ${label}: $${val.toFixed(2)}`;
+            return ` ${label}: ${formatCurrency(val)}`;
           }
         }
       }

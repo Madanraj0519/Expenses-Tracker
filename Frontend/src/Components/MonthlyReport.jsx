@@ -4,11 +4,11 @@ import { toast } from 'react-hot-toast';
 import { filterTransactionsForMonth, summarizeTransactions } from '../utils/finance';
 import ExportCSV from './ExportCSV';
 import ExportPDF from './ExportPDF';
+import { useCurrency } from '../Context/CurrencyContext';
 
 const currentMonth = () => new Date().toISOString().slice(0, 7);
-const currency = (value) => `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
 const MonthlyReport = ({ incomes = [], expenses = [] }) => {
+  const { formatCurrency } = useCurrency();
   const [month, setMonth] = useState(currentMonth);
   const [reportTransactions, setReportTransactions] = useState([]);
   const [isLoadingReport, setIsLoadingReport] = useState(true);
@@ -87,15 +87,15 @@ const MonthlyReport = ({ incomes = [], expenses = [] }) => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 p-3">
           <p className="text-xs text-slate-500 dark:text-slate-400">Income</p>
-          <p className="mt-1 text-lg font-bold text-emerald-600 dark:text-emerald-400">{currency(incomeTotal)}</p>
+          <p className="mt-1 text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(incomeTotal)}</p>
         </div>
         <div className="rounded-xl bg-rose-50 dark:bg-rose-500/10 p-3">
           <p className="text-xs text-slate-500 dark:text-slate-400">Expenses</p>
-          <p className="mt-1 text-lg font-bold text-rose-600 dark:text-rose-400">{currency(expenseTotal)}</p>
+          <p className="mt-1 text-lg font-bold text-rose-600 dark:text-rose-400">{formatCurrency(expenseTotal)}</p>
         </div>
         <div className="rounded-xl bg-blue-50 dark:bg-blue-500/10 p-3">
           <p className="text-xs text-slate-500 dark:text-slate-400">Net savings · {savingsRate.toFixed(1)}% savings rate</p>
-          <p className="mt-1 text-lg font-bold text-blue-600 dark:text-blue-400">{currency(net)}</p>
+          <p className="mt-1 text-lg font-bold text-blue-600 dark:text-blue-400">{formatCurrency(net)}</p>
         </div>
       </div>
       <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">

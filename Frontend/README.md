@@ -43,6 +43,12 @@ The client sends JWT bearer tokens to protected routes. For local setup, run the
 
 The dashboard includes explainable, server-calculated spending insights. Expense-category suggestions use the signed-in user's transaction history and simple description keywords; they are suggestions only and require user confirmation. No external AI provider receives transaction data.
 
+## Regional currency display
+
+On the dashboard, currency is detected from the browser's region when possible (INR is the fallback) and can be changed with the region selector. The seven options are India/INR, United States/USD, United Kingdom/GBP, Eurozone/EUR, Canada/CAD, Australia/AUD, and Japan/JPY. Rates use the public USD-base service at `open.er-api.com`, refresh at least every 24 hours, and are cached locally; the selector discloses when a cached rate is being used. Local currency inputs are disabled if no valid conversion rate is available.
+
+The API continues to store all amounts in USD base units. New local-currency transaction and budget inputs convert to USD before submission. All dashboard amounts, summaries, chart labels, budgets, insight evidence, and CSV/PDF export amounts convert from USD to the selected currency. This includes existing records, which are interpreted as USD as they were previously dollar-based. Conversions use the current/cached rate rather than historical transaction-date rates.
+
 ## Production build configuration
 
 Set `REACT_APP_API_URL` in the frontend hosting provider before building to select the deployed API. Keep the frontend API origin on HTTPS in production.

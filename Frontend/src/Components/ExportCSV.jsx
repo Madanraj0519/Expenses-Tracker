@@ -2,6 +2,7 @@ import React from 'react';
 import { saveAs } from 'file-saver';
 import { toast } from 'react-hot-toast';
 import { FaFileCsv } from "react-icons/fa6";
+import { useCurrency } from '../Context/CurrencyContext';
 
 const escapeCell = (value) => {
     const text = String(value ?? '');
@@ -10,6 +11,7 @@ const escapeCell = (value) => {
 };
 
 const ExportCSV = ({ transactions = [], month, disabled = false }) => {
+    const { currency, convertFromBase } = useCurrency();
     const exportCSV = () => {
         if (!transactions || transactions.length === 0) {
             toast.error("No transactions available to export for this month.");
@@ -17,13 +19,13 @@ const ExportCSV = ({ transactions = [], month, disabled = false }) => {
         }
 
         try {
-            const headers = ['Type', 'Date', 'Category', 'Description', 'Amount'];
+            const headers = ['Type', 'Date', 'Category', 'Description', `Amount (${currency})`];
             const rows = transactions.map(transaction => [
                 transaction.type,
                 new Date(transaction.date).toLocaleDateString(),
                 transaction.category || '',
                 transaction.description || '',
-                Number(transaction.amount).toFixed(2),
+                convertFromBase(transaction.amount).toFixed(currency === 'JPY' ? 0 : 2),
             ].map(escapeCell));
 
             const csvContent = [headers.map(escapeCell).join(','), ...rows.map(r => r.join(','))].join('\r\n');

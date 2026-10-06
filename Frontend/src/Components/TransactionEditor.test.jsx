@@ -9,6 +9,17 @@ jest.mock('../Constant/Backend/axiosInstance', () => ({
 jest.mock('react-hot-toast', () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
+jest.mock('../Context/CurrencyContext', () => ({
+  useCurrency: (() => {
+    const convertAmount = (value) => value;
+    return () => ({
+      currency: 'USD',
+      ratesReady: true,
+      convertFromBase: convertAmount,
+      convertToBase: convertAmount,
+    });
+  })(),
+}));
 
 test('submits validated transaction edits and returns the updated record', async () => {
   const updated = { _id: 'expense-1', amount: 75, category: 'Travel', date: '2026-06-01', description: 'Train' };
@@ -27,7 +38,7 @@ test('submits validated transaction edits and returns the updated record', async
     />
   );
 
-  fireEvent.change(screen.getByLabelText('Amount'), { target: { value: '75' } });
+  fireEvent.change(screen.getByLabelText('Amount (USD)'), { target: { value: '75' } });
   fireEvent.change(screen.getByLabelText('Category'), { target: { value: 'Travel' } });
   fireEvent.change(screen.getByLabelText('Description'), { target: { value: 'Train' } });
   fireEvent.click(screen.getByRole('button', { name: 'Save changes' }));
