@@ -86,6 +86,11 @@ const CustomCategory = ({ category, setCategory }) => {
                 ))}
               </optgroup>
             )}
+            {category && !DEFAULT_CATEGORIES.includes(category) && !customCategories.includes(category) && (
+              <optgroup label="Current category">
+                <option value={category}>{category}</option>
+              </optgroup>
+            )}
             <option value="others">+ Create Custom Category</option>
           </select>
           <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400'>

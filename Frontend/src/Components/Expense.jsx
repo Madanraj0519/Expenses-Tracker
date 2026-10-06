@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaCalendar, FaPlusCircle, FaChevronDown, FaTrash } from "react-icons/fa";
+import { FaCalendar, FaPlusCircle, FaChevronDown, FaTrash, FaEdit } from "react-icons/fa";
 import { HiOutlineReceiptRefund } from "react-icons/hi2";
 import axiosInstance from "../Constant/Backend/axiosInstance";
 import { updateCurrentUser } from "../Feature/Auth/userAuthSlice";
@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getCategoryTheme } from '../Constant/categories';
+import TransactionEditor from './TransactionEditor';
 
 const Expense = () => {
   const [amount, setAmount] = useState('');
@@ -21,11 +22,35 @@ const Expense = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [editingTransaction, setEditingTransaction] = useState(null);
+  const [pagination, setPagination] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [categorySuggestion, setCategorySuggestion] = useState(null);
+  const [isSuggestingCategory, setIsSuggestingCategory] = useState(false);
 
   const { currentUser } = useSelector((state) => state.authUser);
   const dispatch = useDispatch();
 
   const totalExpense = Number(currentUser?.user?.totalExpense ?? currentUser?.totalExpense ?? 0);
+
+  const requestCategorySuggestion = async () => {
+    if (description.trim().length < 2) {
+      toast.error('Add a short description before requesting a suggestion.');
+      return;
+    }
+    try {
+      setIsSuggestingCategory(true);
+      const response = await axiosInstance.post('/api/insights/category-suggestion', {
+        description: description.trim(),
+      });
+      setCategorySuggestion(response.data);
+    } catch (error) {
+      toast.error(error.friendlyMessage || 'Unable to suggest a category.');
+      setCategorySuggestion(null);
+    } finally {
+      setIsSuggestingCategory(false);
+    }
+  };
 
   const handleAddExpense = async (e) => {
     e.preventDefault();
@@ -56,6 +81,7 @@ const Expense = () => {
         }
         if (response.data.newExpense) {
           setIncomes((prev) => [response.data.newExpense, ...prev]);
+          setRefreshKey((key) => key + 1);
         }
         toast.success(response.data.message || 'Expense added successfully');
 
@@ -63,6 +89,7 @@ const Expense = () => {
         setAmount('');
         setCategory('');
         setDescription('');
+        setCategorySuggestion(null);
         setDate(null);
       } else {
         toast.error(response.data?.message || 'Failed to add expense.');
@@ -90,6 +117,7 @@ const Expense = () => {
           dispatch(updateCurrentUser(response.data.user));
         }
         setIncomes((prev) => prev.filter((item) => item._id !== id));
+        setRefreshKey((key) => key + 1);
         toast.success('Expense record deleted successfully');
       } else {
         toast.error(response.data?.message || 'Failed to delete expense');
@@ -178,10 +206,38 @@ const Expense = () => {
                 placeholder='E.g. Dinner with clients, grocery run...'
                 value={description}
                 disabled={isSubmitting}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) => {
+                  setDescription(e.target.value);
+                  setCategorySuggestion(null);
+                }}
                 rows="2"
                 className='w-full p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-rose-500'
               />
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={requestCategorySuggestion}
+                  disabled={isSuggestingCategory || description.trim().length < 2}
+                  className="rounded-lg border border-blue-300 dark:border-blue-700 px-3 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 disabled:opacity-50"
+                >
+                  {isSuggestingCategory ? 'Checking your history…' : 'Suggest category'}
+                </button>
+                {categorySuggestion?.suggestion && (
+                  <span className="text-xs text-slate-600 dark:text-slate-300" aria-live="polite">
+                    Suggestion: <strong>{categorySuggestion.suggestion}</strong> ({Math.round(categorySuggestion.confidence * 100)}% match strength)
+                    <button
+                      type="button"
+                      onClick={() => setCategory(categorySuggestion.suggestion)}
+                      className="ml-2 font-semibold text-blue-600 dark:text-blue-400 underline"
+                    >
+                      Use suggestion
+                    </button>
+                  </span>
+                )}
+                {categorySuggestion && (
+                  <p className="w-full text-[11px] text-slate-500 dark:text-slate-400" aria-live="polite">{categorySuggestion.reason}</p>
+                )}
+              </div>
             </div>
 
             <button
@@ -200,7 +256,7 @@ const Expense = () => {
           <div className='pb-3 border-b border-slate-200 dark:border-slate-800'>
             <h3 className='text-base font-bold text-slate-900 dark:text-white mb-1'>Expense History</h3>
             <p className='text-xs text-slate-500 dark:text-slate-400'>Filter and inspect past expenditure records</p>
-            <ExpenseList incomes={incomes} setIncomes={setIncomes} />
+            <ExpenseList incomes={incomes} setIncomes={setIncomes} pagination={pagination} setPagination={setPagination} refreshKey={refreshKey} />
           </div>
 
           <div className='mt-4 space-y-3 overflow-y-auto max-h-[500px] pr-1'>
@@ -251,6 +307,15 @@ const Expense = () => {
                         <span className='text-base font-bold text-rose-600 dark:text-rose-400'>
                           -${Number(item.amount).toFixed(2)}
                         </span>
+
+                        <button
+                          type='button'
+                          title='Edit record'
+                          onClick={() => setEditingTransaction(item)}
+                          className='p-2 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors'
+                        >
+                          <FaEdit className='text-xs' />
+                        </button>
                         
                         <button
                           type='button'
@@ -292,6 +357,18 @@ const Expense = () => {
         </div>
 
       </div>
+      {editingTransaction && (
+        <TransactionEditor
+          transaction={editingTransaction}
+          type="expense"
+          onClose={() => setEditingTransaction(null)}
+          onSaved={(transaction, user) => {
+            if (user) dispatch(updateCurrentUser(user));
+            setIncomes((items) => items.map((item) => item._id === transaction._id ? transaction : item));
+            setRefreshKey((key) => key + 1);
+          }}
+        />
+      )}
     </div>
   );
 };

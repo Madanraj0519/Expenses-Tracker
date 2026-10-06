@@ -45,9 +45,9 @@ const SignUp = () => {
       return;
     }
 
-    if (!password || password.length < 5) {
-      setInlineError("Password must be at least 5 characters long.");
-      toast.error("Password must be at least 5 characters long.");
+    if (!password || password.length < 8) {
+      setInlineError("Password must be at least 8 characters long.");
+      toast.error("Password must be at least 8 characters long.");
       return;
     }
 
@@ -157,6 +157,7 @@ const SignUp = () => {
                 type={showPassword ? 'text' : 'password'}
                 placeholder='••••••••'
                 value={password}
+                minLength={8}
                 autoComplete="new-password"
                 disabled={loading}
                 onChange={(e) => setPassword(e.target.value)}

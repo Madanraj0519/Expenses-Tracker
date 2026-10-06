@@ -1,70 +1,48 @@
-# Getting Started with Create React App
+# Expense Tracker frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Responsive React application for tracking income, expenses, and monthly budgets. The dashboard includes cash-flow charts, category summaries, monthly net-savings reporting, and CSV/PDF exports.
 
-## Available Scripts
+## Requirements
 
-In the project directory, you can run:
+- Node.js 24.x
+- npm
+- The Expense Tracker backend API
 
-### `npm start`
+## Local development
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Create `Frontend/.env.local` to point the app to a local API:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```dotenv
+REACT_APP_API_URL=http://localhost:8000
+```
 
-### `npm test`
+Install and start:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```powershell
+npm install
+npm start
+```
 
-### `npm run build`
+The app runs at `http://localhost:3000`. If `REACT_APP_API_URL` is not set, requests use the hosted API configured as the project default.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Scripts
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `npm start` — run the development server.
+- `npm test -- --watchAll=false` — run Jest tests once.
+- `npm run build` — create an optimized production build in `build/`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Application structure
 
-### `npm run eject`
+- `src/Pages/` — sign-in, registration, and dashboard pages.
+- `src/Components/` — finance forms, lists, charts, budgets, reports, and exports.
+- `src/Feature/Auth/` and `src/App/` — Redux Toolkit authentication state and store.
+- `src/Constant/Backend/` — API client, base URL, and request/response handling.
+- `src/utils/` — shared finance calculations.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+The client sends JWT bearer tokens to protected routes. For local setup, run the backend separately and configure its `CORS_ORIGINS` to include `http://localhost:3000`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The dashboard includes explainable, server-calculated spending insights. Expense-category suggestions use the signed-in user's transaction history and simple description keywords; they are suggestions only and require user confirmation. No external AI provider receives transaction data.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Production build configuration
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Set `REACT_APP_API_URL` in the frontend hosting provider before building to select the deployed API. Keep the frontend API origin on HTTPS in production.
