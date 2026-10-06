@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../Constant/Backend/axiosInstance';
 import { toast } from 'react-hot-toast';
+import { useCurrency } from '../Context/CurrencyContext';
 
 const currentMonth = () => new Date().toISOString().slice(0, 7);
 
 const SmartInsights = () => {
+  const { formatCurrency } = useCurrency();
   const [month, setMonth] = useState(currentMonth);
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -77,6 +79,16 @@ const SmartInsights = () => {
       ) : data?.insights?.length ? (
         <div className="space-y-3">
           {data.insights.map((insight, index) => {
+            const { evidence = {} } = insight;
+            const message = insight.type === 'budget_pace' && Number.isFinite(evidence.spent) && Number.isFinite(evidence.budget)
+              ? evidence.spent >= evidence.budget
+                ? `${insight.category || 'Overall spending'} spending is ${formatCurrency(evidence.spent)} against a ${formatCurrency(evidence.budget)} budget.`
+                : `At this pace, ${insight.category?.toLowerCase() || 'overall'} spending may reach ${formatCurrency(evidence.projected)} against a ${formatCurrency(evidence.budget)} budget.`
+              : insight.type === 'month_over_month' && Number.isFinite(evidence.currentAmount) && Number.isFinite(evidence.previousComparable)
+                ? `${insight.category} spending is ${formatCurrency(evidence.currentAmount)} over the first ${evidence.comparableDays} days, compared with ${formatCurrency(evidence.previousComparable)} over the same days in ${evidence.previousMonth}.`
+                : insight.type === 'unusual_spending' && Number.isFinite(evidence.projected) && Number.isFinite(evidence.historicalAverage)
+                  ? `At the current pace, ${insight.category?.toLowerCase()} spending may reach ${formatCurrency(evidence.projected)} this month; your average for the previous three months was ${formatCurrency(evidence.historicalAverage)}.`
+                  : insight.message;
             const tone = insight.severity === 'positive'
               ? 'border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-500/10'
               : insight.severity === 'warning'
@@ -85,7 +97,7 @@ const SmartInsights = () => {
             return (
               <article key={`${insight.type}-${insight.category || 'overall'}-${index}`} className={`rounded-xl border p-3 ${tone}`}>
                 <h4 className="text-sm font-semibold text-slate-900 dark:text-white">{insight.title}</h4>
-                <p className="mt-1 text-xs leading-relaxed text-slate-700 dark:text-slate-300">{insight.message}</p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-700 dark:text-slate-300">{message}</p>
               </article>
             );
           })}

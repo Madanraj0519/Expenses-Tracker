@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import BudgetManager from "./BudgetManager";
 import MonthlyReport from "./MonthlyReport";
 import SmartInsights from "./SmartInsights";
+import { useCurrency } from '../Context/CurrencyContext';
 
 const DashboardChart = () => {
   const [incomes, setIncomes] = useState([]);
@@ -18,6 +19,7 @@ const DashboardChart = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const { currentUser } = useSelector(state => state.authUser);
+  const { formatCurrency } = useCurrency();
 
   const totalIncome = Number(currentUser?.user?.totalIncome ?? currentUser?.totalIncome ?? 0);
   const totalExpense = Number(currentUser?.user?.totalExpense ?? currentUser?.totalExpense ?? 0);
@@ -89,7 +91,7 @@ const DashboardChart = () => {
               </div>
               <div className='mt-3'>
                 <h3 className='text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400'>
-                  +${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  +{formatCurrency(totalIncome)}
                 </h3>
                 <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>Cumulative recorded earnings</p>
               </div>
@@ -107,7 +109,7 @@ const DashboardChart = () => {
               </div>
               <div className='mt-3'>
                 <h3 className='text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400'>
-                  -${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  -{formatCurrency(totalExpense)}
                 </h3>
                 <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>Cumulative recorded spending</p>
               </div>
@@ -131,7 +133,7 @@ const DashboardChart = () => {
                 <h3 className={`text-2xl sm:text-3xl font-extrabold ${
                   netBalance >= 0 ? "text-blue-600 dark:text-blue-400" : "text-amber-600 dark:text-amber-400"
                 }`}>
-                  ${netBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {formatCurrency(netBalance)}
                 </h3>
                 <p className='text-xs text-slate-500 dark:text-slate-400 mt-1'>
                   {netBalance >= 0 ? "Healthy financial surplus" : "Expenses exceed income"}

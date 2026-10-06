@@ -4,9 +4,11 @@ import 'jspdf-autotable';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-hot-toast';
 import { FaFilePdf } from "react-icons/fa6";
+import { useCurrency } from '../Context/CurrencyContext';
 
 const ExportPDF = ({ transactions = [], month, disabled = false }) => {
     const { currentUser } = useSelector(state => state.authUser);
+    const { currency, convertFromBase } = useCurrency();
 
     const exportPDF = () => {
         if (!transactions || transactions.length === 0) {
@@ -23,7 +25,7 @@ const ExportPDF = ({ transactions = [], month, disabled = false }) => {
             doc.setFontSize(10);
             doc.text(`Generated on ${new Date().toLocaleDateString()}`, 14, 26);
 
-            const tableColumn = ['Type', 'Date', 'Category', 'Description', 'Amount'];
+            const tableColumn = ['Type', 'Date', 'Category', 'Description', `Amount (${currency})`];
             const tableRows = [];
 
             transactions.forEach((transaction) => {
@@ -32,7 +34,10 @@ const ExportPDF = ({ transactions = [], month, disabled = false }) => {
                     new Date(transaction.date).toLocaleDateString(),
                     transaction.category || '-',
                     transaction.description || '-',
-                    `$${Number(transaction.amount).toFixed(2)}`
+                    `${currency} ${convertFromBase(transaction.amount).toLocaleString('en-US', {
+                        minimumFractionDigits: currency === 'JPY' ? 0 : 2,
+                        maximumFractionDigits: currency === 'JPY' ? 0 : 2,
+                    })}`
                 ];
                 tableRows.push(transactionData);
             });

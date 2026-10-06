@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import axiosInstance from '../Constant/Backend/axiosInstance';
 import { toast } from 'react-hot-toast';
+import { useCurrency } from '../Context/CurrencyContext';
 
 const TransactionEditor = ({ transaction, type, onClose, onSaved }) => {
-  const [amount, setAmount] = useState(String(transaction.amount));
+  const { currency, ratesReady, convertFromBase, convertToBase } = useCurrency();
+  const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(transaction.category || '');
   const [date, setDate] = useState(transaction.date ? new Date(transaction.date).toISOString().slice(0, 10) : '');
   const [description, setDescription] = useState(transaction.description || '');
   const [isSaving, setIsSaving] = useState(false);
   const isExpense = type === 'expense';
   const entity = isExpense ? 'Expense' : 'Income';
+
+  React.useEffect(() => {
+    if (ratesReady) setAmount(String(convertFromBase(transaction.amount)));
+  }, [transaction._id, transaction.amount, currency, ratesReady, convertFromBase]);
 
   const save = async (event) => {
     event.preventDefault();
@@ -21,8 +27,12 @@ const TransactionEditor = ({ transaction, type, onClose, onSaved }) => {
 
     try {
       setIsSaving(true);
+      if (!ratesReady) {
+        toast.error('Wait for a valid exchange rate before saving this transaction.');
+        return;
+      }
       const response = await axiosInstance.put(`/api/${type}/update${entity}/${transaction._id}`, {
-        amount: parsedAmount,
+        amount: convertToBase(parsedAmount),
         category: category.trim(),
         date,
         description: description.trim(),
@@ -48,8 +58,8 @@ const TransactionEditor = ({ transaction, type, onClose, onSaved }) => {
         </div>
         <form onSubmit={save} className="space-y-3">
           <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300">
-            Amount
-            <input type="number" min="0.01" step="0.01" required value={amount} onChange={(event) => setAmount(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm" />
+            Amount ({currency})
+            <input type="number" min="0.01" step={currency === 'JPY' ? '1' : '0.01'} required disabled={!ratesReady} value={amount} onChange={(event) => setAmount(event.target.value)} className="mt-1 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-sm disabled:opacity-50" />
           </label>
           <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300">
             Category
@@ -65,7 +75,7 @@ const TransactionEditor = ({ transaction, type, onClose, onSaved }) => {
           </label>
           <div className="flex justify-end gap-2 pt-2">
             <button type="button" onClick={onClose} disabled={isSaving} className="rounded-xl border border-slate-300 dark:border-slate-700 px-4 py-2 text-sm font-medium">Cancel</button>
-            <button type="submit" disabled={isSaving} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isSaving ? 'Saving…' : 'Save changes'}</button>
+            <button type="submit" disabled={isSaving || !ratesReady} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{isSaving ? 'Saving…' : 'Save changes'}</button>
           </div>
         </form>
       </section>

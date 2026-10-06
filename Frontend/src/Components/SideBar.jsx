@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import logo from "../assets/expense-logo.png";
 import ThemeToggle from "./ThemeToggle";
+import CurrencySelector from "./CurrencySelector";
 
 const SideBar = ({ setActive, active, isMobileOpen, setIsMobileOpen }) => {
   const navigate = useNavigate();
@@ -102,6 +103,7 @@ const SideBar = ({ setActive, active, isMobileOpen, setIsMobileOpen }) => {
 
       {/* Footer Controls: Theme Toggle & Logout */}
       <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80 space-y-2">
+        <CurrencySelector />
         <ThemeToggle />
 
         <button

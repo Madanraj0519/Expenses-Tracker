@@ -9,6 +9,11 @@ jest.mock('../Constant/Backend/axiosInstance', () => ({
 jest.mock('react-hot-toast', () => ({
   toast: { error: jest.fn() },
 }));
+jest.mock('../Context/CurrencyContext', () => ({
+  useCurrency: () => ({
+    formatCurrency: (value) => `$${Number(value).toFixed(2)}`,
+  }),
+}));
 
 test('renders explainable, server-calculated spending insights', async () => {
   axiosInstance.get.mockResolvedValue({

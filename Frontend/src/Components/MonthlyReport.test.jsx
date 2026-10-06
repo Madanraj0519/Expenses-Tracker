@@ -8,6 +8,11 @@ jest.mock('./ExportPDF', () => () => <button type="button">PDF report</button>);
 jest.mock('../Constant/Backend/axiosInstance', () => ({
   get: jest.fn(),
 }));
+jest.mock('../Context/CurrencyContext', () => ({
+  useCurrency: () => ({
+    formatCurrency: (value) => `$${Number(value).toFixed(2)}`,
+  }),
+}));
 
 test('shows the selected month totals and updates them when the month changes', async () => {
   axiosInstance.get.mockImplementation((path) => Promise.resolve({

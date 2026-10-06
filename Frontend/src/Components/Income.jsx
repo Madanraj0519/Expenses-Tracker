@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getCategoryTheme } from '../Constant/categories';
 import TransactionEditor from './TransactionEditor';
+import { useCurrency } from '../Context/CurrencyContext';
 
 const INCOME_CATEGORIES = [
   "Salary",
@@ -41,6 +42,7 @@ const Income = () => {
 
   const { currentUser } = useSelector((state) => state.authUser);
   const dispatch = useDispatch();
+  const { currency, ratesReady, convertToBase, formatCurrency } = useCurrency();
 
   const totalIncome = Number(currentUser?.user?.totalIncome ?? currentUser?.totalIncome ?? 0);
 
@@ -92,7 +94,7 @@ const Income = () => {
     try {
       setIsSubmitting(true);
       const response = await axiosInstance.post('/api/income/addIncome', {
-        amount: parsedAmount,
+        amount: convertToBase(parsedAmount),
         category: finalCategory,
         date: date || new Date(),
         description: description.trim()
@@ -169,7 +171,7 @@ const Income = () => {
         <div className='px-4 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-right'>
           <span className='text-xs text-slate-500 dark:text-slate-400 block font-medium'>Total Earnings</span>
           <span className='text-xl font-extrabold text-emerald-600 dark:text-emerald-400'>
-            +${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            +{formatCurrency(totalIncome)}
           </span>
         </div>
       </div>
@@ -217,20 +219,21 @@ const Income = () => {
 
             <div>
               <label className='text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider block mb-1.5'>
-                Amount ($)
+                Amount ({currency})
               </label>
               <div className='relative'>
                 <span className='absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-bold'>
-                  $
+                  {new Intl.NumberFormat(undefined, { style: 'currency', currency }).formatToParts(0).find((part) => part.type === 'currency')?.value || currency}
                 </span>
                 <input
                   type='number'
                   placeholder='0.00'
                   min="0.01"
-                  step="0.01"
+                  step={currency === 'JPY' ? '1' : '0.01'}
                   required
                   value={amount}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !ratesReady}
+                  aria-label={`Amount in ${currency}`}
                   onChange={(e) => setAmount(e.target.value)}
                   className='w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-300 dark:border-slate-700/80 text-slate-900 dark:text-white font-medium text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50'
                 />
@@ -266,7 +269,7 @@ const Income = () => {
 
             <button
               type='submit'
-              disabled={isSubmitting}
+              disabled={isSubmitting || !ratesReady}
               className='w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-glow-green hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2'
             >
               <FaPlusCircle className='text-base' />
@@ -343,7 +346,7 @@ const Income = () => {
 
                       <div className='flex items-center gap-3'>
                         <span className='text-base font-bold text-emerald-600 dark:text-emerald-400'>
-                          +${Number(item.amount).toFixed(2)}
+                          +{formatCurrency(item.amount)}
                         </span>
 
                         <button

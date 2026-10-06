@@ -11,6 +11,14 @@ jest.mock('../Constant/Backend/axiosInstance', () => ({
 jest.mock('react-hot-toast', () => ({
   toast: { error: jest.fn(), success: jest.fn() },
 }));
+jest.mock('../Context/CurrencyContext', () => ({
+  useCurrency: () => ({
+    currency: 'USD',
+    ratesReady: true,
+    convertToBase: (value) => value,
+    formatCurrency: (value) => `$${Number(value).toFixed(2)}`,
+  }),
+}));
 
 test('shows budget usage and threshold warning from the API response', async () => {
   axiosInstance.get.mockResolvedValue({

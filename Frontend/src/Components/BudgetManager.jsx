@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axiosInstance from '../Constant/Backend/axiosInstance';
 import { toast } from 'react-hot-toast';
+import { useCurrency } from '../Context/CurrencyContext';
 
 const currentMonth = () => new Date().toISOString().slice(0, 7);
-const currency = (value) => `$${Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
 const BudgetManager = () => {
+  const { currency, ratesReady, convertToBase, formatCurrency } = useCurrency();
   const [month, setMonth] = useState(currentMonth);
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
@@ -42,7 +42,7 @@ const BudgetManager = () => {
       await axiosInstance.put('/api/budget', {
         month,
         category: category.trim() || null,
-        amount: value,
+        amount: convertToBase(value),
       });
       setAmount('');
       setCategory('');
@@ -102,14 +102,16 @@ const BudgetManager = () => {
           id="budget-amount"
           type="number"
           min="0.01"
-          step="0.01"
+          step={currency === 'JPY' ? '1' : '0.01'}
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
-          placeholder="Limit amount"
+          placeholder={`Limit amount (${currency})`}
+          aria-label={`Monthly budget limit in ${currency}`}
+          disabled={!ratesReady}
           required
           className="min-w-0 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm"
         />
-        <button type="submit" disabled={isSaving} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
+        <button type="submit" disabled={isSaving || !ratesReady} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
           {isSaving ? 'Saving…' : 'Save budget'}
         </button>
       </form>
@@ -130,12 +132,12 @@ const BudgetManager = () => {
                   <div>
                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{budget.category || 'Overall spending'}</p>
                     <p className={`text-xs mt-0.5 ${exceeded ? 'text-rose-600 dark:text-rose-400' : warning ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`}>
-                      {exceeded ? 'Budget exceeded' : warning ? '80% or more used' : `${currency(budget.remaining)} remaining`}
+                      {exceeded ? 'Budget exceeded' : warning ? '80% or more used' : `${formatCurrency(budget.remaining)} remaining`}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-right text-xs text-slate-600 dark:text-slate-300">
-                      {currency(budget.spent)} / {currency(budget.amount)}
+                      {formatCurrency(budget.spent)} / {formatCurrency(budget.amount)}
                       <span className="block">{budget.percentage.toFixed(0)}% used</span>
                     </span>
                     <button type="button" onClick={() => deleteBudget(budget._id)} aria-label={`Remove ${budget.category || 'overall'} budget`} className="text-xs font-medium text-rose-600 hover:text-rose-500">

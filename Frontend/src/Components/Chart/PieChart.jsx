@@ -4,12 +4,14 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import moment from 'moment-timezone';
 import { getCategoryTheme } from '../../Constant/categories';
 import { useTheme } from '../../Context/ThemeContext';
+import { useCurrency } from '../../Context/CurrencyContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const PieChart = ({ expenses = [], selectOption, setSelectOption }) => {
   const [groupBy, setGroupBy] = useState('category'); // 'category' or 'date'
   const { isDark } = useTheme();
+  const { formatCurrency } = useCurrency();
 
   const safeData = Array.isArray(expenses) ? expenses : [];
 
@@ -72,7 +74,7 @@ const PieChart = ({ expenses = [], selectOption, setSelectOption }) => {
         callbacks: {
           label: (context) => {
             const val = context.raw || 0;
-            return ` $${Number(val).toFixed(2)}`;
+            return ` ${formatCurrency(val)}`;
           }
         }
       }
