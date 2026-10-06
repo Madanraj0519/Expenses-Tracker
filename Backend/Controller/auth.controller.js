@@ -15,18 +15,18 @@ const createToken = (id) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { userName, email, password } = req.body;
 
-    if (!userName || !userName.trim()) {
+    if (typeof userName !== 'string' || !userName.trim()) {
         throw new BadRequestError('User name is required.');
     }
-    if (!email || !email.trim()) {
+    if (typeof email !== 'string' || !email.trim()) {
         throw new BadRequestError('Email address is required.');
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
         throw new BadRequestError('Please provide a valid email address.');
     }
-    if (!password || password.length < 5) {
-        throw new BadRequestError('Password must be at least 5 characters long.');
+    if (typeof password !== 'string' || password.length < 8) {
+        throw new BadRequestError('Password must be at least 8 characters long.');
     }
 
     const normalizedEmail = email.trim().toLowerCase();
@@ -62,10 +62,10 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    if (!email || !email.trim()) {
+    if (typeof email !== 'string' || !email.trim()) {
         throw new BadRequestError('Email address is required.');
     }
-    if (!password) {
+    if (typeof password !== 'string' || !password) {
         throw new BadRequestError('Password is required.');
     }
 

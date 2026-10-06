@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { FaCalendar, FaPlusCircle, FaChevronDown, FaTrash } from "react-icons/fa";
+import React, { useCallback, useEffect, useState } from 'react';
+import { FaCalendar, FaPlusCircle, FaChevronDown, FaTrash, FaEdit } from "react-icons/fa";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import axiosInstance from "../Constant/Backend/axiosInstance";
 import { updateCurrentUser } from "../Feature/Auth/userAuthSlice";
@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getCategoryTheme } from '../Constant/categories';
+import TransactionEditor from './TransactionEditor';
 
 const INCOME_CATEGORIES = [
   "Salary",
@@ -33,18 +34,30 @@ const Income = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [editingTransaction, setEditingTransaction] = useState(null);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
 
   const { currentUser } = useSelector((state) => state.authUser);
   const dispatch = useDispatch();
 
   const totalIncome = Number(currentUser?.user?.totalIncome ?? currentUser?.totalIncome ?? 0);
 
-  const fetchIncomes = async () => {
+  const fetchIncomes = useCallback(async () => {
     try {
       setIsLoading(true);
-      const res = await axiosInstance.get('/api/income/getIncome');
+      const res = await axiosInstance.get('/api/income/getIncome', {
+        params: { page, limit: 10, search },
+      });
       if (res.data && res.data.incomes) {
+        const totalPages = res.data.pagination?.totalPages || 0;
+        if (page > Math.max(1, totalPages)) {
+          setPage(Math.max(1, totalPages));
+          return;
+        }
         setIncomes(res.data.incomes);
+        setPagination(res.data.pagination);
       }
     } catch (err) {
       const errorMsg = err.friendlyMessage || err.message || 'Failed to load incomes.';
@@ -52,11 +65,11 @@ const Income = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [page, search]);
 
   useEffect(() => {
     fetchIncomes();
-  }, []);
+  }, [fetchIncomes]);
 
   const handleAddIncome = async (e) => {
     e.preventDefault();
@@ -90,6 +103,8 @@ const Income = () => {
           dispatch(updateCurrentUser(response.data.user));
         }
         if (response.data.newIncome) {
+          setPage(1);
+          setSearch('');
           setIncomes((prev) => [response.data.newIncome, ...prev]);
         }
         toast.success(response.data.message || 'Income added successfully');
@@ -125,6 +140,7 @@ const Income = () => {
           dispatch(updateCurrentUser(response.data.user));
         }
         setIncomes((prev) => prev.filter((item) => item._id !== id));
+        await fetchIncomes();
         toast.success('Income record deleted successfully');
       } else {
         toast.error(response.data?.message || 'Failed to delete income');
@@ -264,6 +280,17 @@ const Income = () => {
           <div className='pb-3 border-b border-slate-200 dark:border-slate-800'>
             <h3 className='text-base font-bold text-slate-900 dark:text-white mb-1'>Income Records</h3>
             <p className='text-xs text-slate-500 dark:text-slate-400'>Timeline of all earnings logged into your account</p>
+            <input
+              type="search"
+              aria-label="Search income category or description"
+              placeholder="Search category or description"
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+                setPage(1);
+              }}
+              className="mt-3 w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 px-3 py-2 text-sm"
+            />
           </div>
 
           <div className='mt-4 space-y-3 overflow-y-auto max-h-[500px] pr-1'>
@@ -318,6 +345,15 @@ const Income = () => {
                         <span className='text-base font-bold text-emerald-600 dark:text-emerald-400'>
                           +${Number(item.amount).toFixed(2)}
                         </span>
+
+                        <button
+                          type='button'
+                          title='Edit record'
+                          onClick={() => setEditingTransaction(item)}
+                          className='p-2 rounded-lg text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10 transition-colors'
+                        >
+                          <FaEdit className='text-xs' />
+                        </button>
                         
                         <button
                           type='button'
@@ -356,9 +392,29 @@ const Income = () => {
               </div>
             )}
           </div>
+          {pagination && pagination.totalPages > 1 && (
+            <div className="mt-3 flex items-center justify-between text-xs text-slate-600 dark:text-slate-300">
+              <span>Page {pagination.page} of {pagination.totalPages} · {pagination.totalItems} income records</span>
+              <div className="flex gap-2">
+                <button type="button" disabled={page <= 1} onClick={() => setPage((value) => value - 1)} className="rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1 disabled:opacity-40">Previous</button>
+                <button type="button" disabled={page >= pagination.totalPages} onClick={() => setPage((value) => value + 1)} className="rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-1 disabled:opacity-40">Next</button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
+      {editingTransaction && (
+        <TransactionEditor
+          transaction={editingTransaction}
+          type="income"
+          onClose={() => setEditingTransaction(null)}
+          onSaved={(transaction, user) => {
+            if (user) dispatch(updateCurrentUser(user));
+            setIncomes((items) => items.map((item) => item._id === transaction._id ? transaction : item));
+          }}
+        />
+      )}
     </div>
   );
 };

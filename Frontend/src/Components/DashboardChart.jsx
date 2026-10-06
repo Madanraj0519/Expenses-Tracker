@@ -5,10 +5,11 @@ import { useSelector } from 'react-redux';
 import PieChart from './Chart/PieChart';
 import LineChart from "./Chart/LineChart";
 import ExpenseSummary from "./ExpenseSummary";
-import ExportCSV from "./ExportCSV";
-import ExportPDF from "./ExportPDF";
 import Loading from "./Loading";
 import { toast } from "react-hot-toast";
+import BudgetManager from "./BudgetManager";
+import MonthlyReport from "./MonthlyReport";
+import SmartInsights from "./SmartInsights";
 
 const DashboardChart = () => {
   const [incomes, setIncomes] = useState([]);
@@ -29,7 +30,7 @@ const DashboardChart = () => {
       try {
         setIsLoading(true);
         const [incomesRes, expensesRes] = await Promise.all([
-          axiosInstance.get('/api/income/getIncome'),
+          axiosInstance.get('/api/income/getIncomeChart'),
           axiosInstance.get('/api/expense/getExpenseChart'),
         ]);
 
@@ -56,7 +57,7 @@ const DashboardChart = () => {
 
   return (
     <div className='w-full space-y-6'>
-      {/* Top Header & Export Actions */}
+      {/* Dashboard heading */}
       <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800'>
         <div>
           <h2 className='text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5'>
@@ -65,10 +66,6 @@ const DashboardChart = () => {
           <p className='text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1'>
             Track your cash flow, analyze spending patterns, and monitor net balance.
           </p>
-        </div>
-        <div className='flex items-center gap-2.5 flex-wrap'>
-          <ExportCSV expenses={expenses} />
-          <ExportPDF expenses={expenses} />
         </div>
       </div>
 
@@ -164,6 +161,10 @@ const DashboardChart = () => {
           <div className='rounded-2xl glass-card border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-md'>
             <ExpenseSummary expenses={expenses} />
           </div>
+
+          <BudgetManager />
+          <SmartInsights />
+          <MonthlyReport incomes={incomes} expenses={expenses} />
         </>
       )}
     </div>

@@ -7,7 +7,10 @@ const mongoose = require('mongoose');
 const { authRouter } = require('./Router/auth.router');
 const { incomeRouter } = require('./Router/income.router');
 const { ExpenseRouter } = require('./Router/expense.router');
+const { budgetRouter } = require('./Router/budget.router');
+const { insightsRouter } = require('./Router/insights.router');
 const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
+const { ForbiddenError } = require('./utils/ApiError');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -26,10 +29,13 @@ app.use(express.json({ limit: '16kb' }));
 app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(cookieParser());
 
-const allowedOrigins = [
-    // 'http://localhost:3000',
-    'https://expenses-trackers-front-end.vercel.app'
-];
+const allowedOrigins = (process.env.CORS_ORIGINS || 'https://expenses-trackers-front-end.vercel.app')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+if (process.env.NODE_ENV !== 'production') {
+    allowedOrigins.push('http://localhost:3000');
+}
 
 const corsOptions = {
     origin: function (origin, callback) {
@@ -37,7 +43,7 @@ const corsOptions = {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            callback(null, true); // Fallback for dev ease or specify domain
+            callback(new ForbiddenError('Origin is not allowed by CORS.'));
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -74,6 +80,8 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/income', incomeRouter);
 app.use('/api/expense', ExpenseRouter);
+app.use('/api/budget', budgetRouter);
+app.use('/api/insights', insightsRouter);
 
 // 404 Route Not Found Middleware (Must be placed after all route definitions)
 app.use(notFoundHandler);
